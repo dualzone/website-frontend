@@ -5,21 +5,32 @@ export default function Sidebar() {
         <aside
             className="
         group
-        w-20 hover:w-64
+        w-16 hover:w-96
         bg-gray-700
         border-r border-gray-800
-        p-5
         transition-all duration-300
         overflow-hidden
       "
         >
             {/* Menu latéral */}
-            <nav className="flex flex-col space-y-2">
+            <nav className="flex flex-col space-y-1 group transition-all ml-4">
+
+                <a href="#" className="justify-center">
+                    <span >
+                    <Image className="hidden group-hover:flex pt-5"
+                        src="Logo typographique DualZone.svg" // Place le SVG dans /public
+                        alt="Logo"
+                        width={300}
+                        height={300}
+                    />
+                    </span>
+                </a>
+
                 {/* Ex. 1 */}
-                <a href="#" className="flex items-center p-3 hover:bg-gray-600 rounded">
+                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
                     {/* Icône toujours visible */}
                     <span className="h-5 w-5 min-h-[20px] min-w-[20px]">
-                    <Image
+                    <Image className="ml-1"
                         src="/DualZone-Play.svg" // Place le SVG dans /public
                         alt="Play"
                         width={20}
@@ -40,9 +51,9 @@ export default function Sidebar() {
                 </a>
 
                 {/* Ex. 2 */}
-                <a href="#" className="flex items-center p-3 hover:bg-gray-600 rounded">
-          <span className="h-5 w-5 min-h-[20px] min-w-[20px]">
-            <Image
+                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
+          <span className="h-5 w-5 min-h-[20px] min-w-[20px] ml-1">
+            <Image className="justify-center"
                 src="/Classement-DualZone.svg"
                 alt="Settings"
                 width={20}
@@ -64,10 +75,10 @@ export default function Sidebar() {
                 </a>
 
                 {/* Ex. 3 */}
-                <a href="#" className="flex items-center p-3 hover:bg-gray-600 rounded">
-          <span className="h-5 w-5 min-h-[20px] min-w-[20px]">
-            <Image
-                src="/DualZone-Design.svg"
+                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
+          <span className="h-5 w-5 min-h-[20px] min-w-[20px] ml-1">
+            <Image className="justify-center"
+                src="/User Rank.svg"
                 alt="Connexion"
                 width={20}
                 height={20}

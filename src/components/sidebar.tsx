@@ -11,6 +11,8 @@ export default function Sidebar() {
         transition-all duration-300
         overflow-hidden
         min-h-screen md:min-h-screen lg:min-h-screen
+        fixed
+        top-20
       "
         >
             {/* Menu latéral */}

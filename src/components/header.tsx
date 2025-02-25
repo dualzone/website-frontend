@@ -8,11 +8,9 @@ const HeaderComp = () => {
     return (
         <header className="w-full bg-gray-700 shadow-md justify-between items-center h-20 pt-1 fixed z-50">
             <div className="text-xl font-bold text-gray-900 mb-0 flex ml-auto mr-5">
-                <div>
-                    <Link href="/">
-                        <span className="cursor-pointer">
-                            <Image src="/TypoDZ.svg" alt="Logo Typographique DualZone" className="h-30" width={450} height={1000} />
-                        </span>
+                <div className="overflow-hidden">
+                    <Link href="/" className="flex items-center">
+                            <Image src="/TypoDZ.svg" alt="Logo Typographique DualZone" className="h-auto w-auto max-w-[350px] max-h-[150px]" width={350} height={150}/>
                     </Link>
                 </div>
                 <div className="ml-auto mt-3">
@@ -58,8 +56,8 @@ const HeaderComp = () => {
                         <div className="mt-4 text-center">
                             <p className="text-gray-400">Ou</p>
                             <Link href="/api/auth/steam"
-                               className="mt-2 items-center h-20 bg-gray-80 font-bold text-white px-4 py-1 rounded-lg bg-gray-800 hover:bg-gray-900 transition inline-flex">
-                                <a className="justify-center">Se connecter avec</a>
+                               className="mt-2 items-center bg-gray-80 font-bold text-white px-4 py-1 rounded-lg bg-gray-800 hover:bg-gray-900 transition inline-flex">
+                                <button className="justify-center">Se connecter avec</button>
                                 <Image src="/steam.svg" alt="Logo steam" className="right-2" height={75} width={75} />
                             </Link>
                         </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Sidebar() {
     return (
@@ -12,19 +13,21 @@ export default function Sidebar() {
         overflow-hidden
         min-h-screen md:min-h-screen lg:min-h-screen
         fixed
-        top-20
+        top-0
+        pt-20
+        h-screen
       "
         >
             {/* Menu latéral */}
-            <nav className="flex flex-col group transition-all space-y-3">
-                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
+            <nav className="flex flex-col h-full group transition-all">
+                <Link href="/" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
                     {/* Icône toujours visible */}
                     <span className="h-5 w-5 min-h-[25px] min-w-[25px] ml-4">
                     <Image className="justify-center"
-                        src="/DualZone-Play.svg" // Place le SVG dans /public
-                        alt="Play"
-                        width={25}
-                        height={25}
+                           src="/DualZone-Play.svg" // Place le SVG dans /public
+                           alt="Play"
+                           width={25}
+                           height={25}
                     />
           </span>
                     <span
@@ -36,18 +39,18 @@ export default function Sidebar() {
               ml-4
             "
                     >
-                        Accueil
+                        Jouer
           </span>
-                </a>
+                </Link>
 
                 {/* Ex. 2 */}
-                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
+                <Link href="/dashboard" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
           <span className="h-5 w-5 min-h-[25px] min-w-[25px] ml-4">
             <Image className="justify-center"
-                src="/Classement-DualZone.svg"
-                alt="Settings"
-                width={25}
-                height={25}
+                   src="/Classement-DualZone.svg"
+                   alt="Settings"
+                   width={25}
+                   height={25}
             />
           </span>
 
@@ -60,18 +63,18 @@ export default function Sidebar() {
               ml-4
             "
                     >
-            Settings
+            Dashboard
           </span>
-                </a>
+                </Link>
 
                 {/* Ex. 3 */}
-                <a href="#" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded">
+                <Link href="/profil" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
           <span className="h-5 w-5 min-h-[25px] min-w-[25px] ml-4">
             <Image className="justify-center"
-                src="/User Rank.svg"
-                alt="Connexion"
-                width={25}
-                height={25}
+                   src="/User Rank.svg"
+                   alt="Connexion"
+                   width={25}
+                   height={25}
             />
           </span>
 
@@ -84,9 +87,30 @@ export default function Sidebar() {
               transition duration-200
             "
                     >
-            Connexion
+            Profil
           </span>
-                </a>
+
+                </Link>
+                <Link href="/friends" className="flex items-center hover:bg-gray-600 pb-3 pt-3 rounded mt-auto mb-10">
+                    <span className="h-5 w-5 min-h-[25px] ml-4">
+                        <Image className="justify-center min-h-[25px] min-w-[25px] h-5 w-5"
+                               src="/Friends.png"
+                               alt="Friends"
+                               width={25}
+                               height={25}
+                        />
+                    </span>
+                        <span className="
+                        ml-6
+                        group-hover:inline-block
+                        text-gray-700
+                        group-hover:text-white
+                        transition duration-200
+                        whitespace-nowrap
+              ">
+                            Amis connecté: 3
+                        </span>
+          </Link>
             </nav>
         </aside>
     );

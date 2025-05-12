@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Sidebar from "../components/sidebar";
 import HeaderComp from "../components/header";
+import { AuthProvider } from "@/context/authcontext"; // ou depuis le bon chemin si tu l’as déplacé
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,11 +34,13 @@ export default function RootLayout({
         flex-col
         `}
       >
+      <AuthProvider>
       <HeaderComp/>
       <div className="min-h-screen flex">
         <Sidebar />
           <main className="flex-1 p-6">{children}</main>
         </div>
+      </AuthProvider>
       </body>
     </html>
   );

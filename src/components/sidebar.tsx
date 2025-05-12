@@ -1,7 +1,10 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import {useAuth} from "@/context/authcontext";
 
 export default function Sidebar() {
+    const {isConnected} = useAuth();
     return (
         <aside
             className="
@@ -16,6 +19,7 @@ export default function Sidebar() {
         top-0
         pt-20
         h-screen
+        z-10
       "
         >
             {/* Menu latéral */}
@@ -44,7 +48,7 @@ export default function Sidebar() {
                 </Link>
 
                 {/* Ex. 2 */}
-                <Link href="/dashboard" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
+                <Link href={isConnected ? "/dashboard" : "/"} className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
           <span className="h-5 w-5 min-h-[25px] min-w-[25px] ml-4">
             <Image className="justify-center"
                    src="/Classement-DualZone.svg"
@@ -68,7 +72,7 @@ export default function Sidebar() {
                 </Link>
 
                 {/* Ex. 3 */}
-                <Link href="/profil" className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
+                <Link href={isConnected ? "/profil" : "/"} className="flex items-center pb-3 pt-3 hover:bg-gray-600 rounded mt-1.5 mb-1.5">
           <span className="h-5 w-5 min-h-[25px] min-w-[25px] ml-4">
             <Image className="justify-center"
                    src="/User Rank.svg"
@@ -91,7 +95,7 @@ export default function Sidebar() {
           </span>
 
                 </Link>
-                <Link href="/friends" className="flex items-center hover:bg-gray-600 pb-3 pt-3 rounded mt-auto mb-10">
+                <Link href={isConnected ? "/friends" : "/"} className="flex items-center hover:bg-gray-600 pb-3 pt-3 rounded mt-auto mb-10">
                     <span className="h-5 w-5 min-h-[25px] ml-4">
                         <Image className="justify-center min-h-[25px] min-w-[25px] h-5 w-5"
                                src="/Friends.png"

@@ -1,11 +1,22 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useAuth} from "@/context/authcontext";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/authcontext";
+import { useEffect } from "react";
 
 
 export default function Home() {
-    const { isConnected } = useAuth();
+    const { isConnected, user } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const token = searchParams.get("token");
+        if (token) {
+            localStorage.setItem("access_token", token);
+            window.location.href = "/"; // recharge proprement sans ?token=...
+        }
+    }, [searchParams])
 
     const handleStartMatch = (mode: "1v1" | "2v2") => {
       console.log("Mode sélectionné :", mode);
@@ -19,7 +30,7 @@ export default function Home() {
                     {isConnected ? (
                         <>
                             <p className="text-lg font-bold flex">
-                                ✅ Connecté ! Bienvenue xX_D4rk-_-K1ll3r_Xx!
+                                ✅ Connecté ! Bienvenue {user?.pseudo ?? "joueur"} !
                             </p>
                             <div className="mt-6 flex gap-4 w-full h-[90%]">
                               <button

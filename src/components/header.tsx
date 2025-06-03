@@ -5,16 +5,15 @@ import { useAuth } from "@/context/authcontext";
 
 const HeaderComp = () => {
 
-    const { isConnected, setIsConnected } = useAuth();
+    const { isConnected, logout } = useAuth();
 
-    const handleConnect = () => {
-        setIsConnected(true); // simulate connection
-        window.location.href = "/"; // redirection réelle
+
+    const handleConnect = () => {// simulate connection
+        window.location.href = "http://localhost:3333/auth/steam/"; // redirection réelle
     };
 
     const handleDisconnect = () => {
-        setIsConnected(false);
-        window.location.href = "/";
+        logout(); // ✅ appeler la vraie fonction de déconnexion
     };
 
     return (

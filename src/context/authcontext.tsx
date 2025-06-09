@@ -16,6 +16,7 @@ type AuthContextType = {
     token: string | null;
     user: User | null;
     logout: () => void;
+    isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +25,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isConnected, setIsConnectedState] = useState(false);
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    console.log("[Home.tsx]", { isConnected, user, isLoading });
+
+
+
 
     useEffect(() => {
         const storedToken = localStorage.getItem("access_token");
@@ -35,11 +41,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             })
                 .then(res => res.ok ? res.json() : Promise.reject("unauthorized"))
                 .then(data => {
+                    console.log("[AUTH] Authentifié :", data.user);
                     setIsConnectedState(true);
                     setToken(storedToken);
                     setUser(data.user);
                 })
-                .catch(() => logout());
+                .catch((err) => {
+                    console.log("[AUTH] Erreur auth :", err);
+                    setIsLoading(false);
+                    setToken(null);
+                    setUser(null);
+                    logout();
+                });
+        }else{
+            setIsLoading(false);
         }
     }, []);
 
@@ -61,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
     return (
-        <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout }}>
+        <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

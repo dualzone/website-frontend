@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useAuth } from "@/context/authcontext";
 
 export default function DashboardPage() {
-    const { user, isConnected, elo } = useAuth();
+    const { user, isConnected } = useAuth();
 
     if (!isConnected || !user) {
         return <p className="text-white p-8">Chargement ou non connecté...</p>;
@@ -37,7 +37,6 @@ export default function DashboardPage() {
                     )}
                     <div className="flex-col items-center text-white">
                         <span className="text-lg font-bold flex">{user.pseudo}</span>
-                        <span className="text-lg text-gray-300 flex">Elo : {user.elo ?? "?"}</span>
                     </div>
                 </div>
             </header>

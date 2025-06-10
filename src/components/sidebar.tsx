@@ -95,6 +95,9 @@ export default function Sidebar() {
           </span>
 
                 </Link>
+
+                { isConnected &&
+                    (
                 <Link href={isConnected ? "/friends" : "/"} className="flex items-center hover:bg-gray-600 pb-3 pt-3 rounded mt-auto mb-10">
                     <span className="h-5 w-5 min-h-[25px] ml-4">
                         <Image className="justify-center min-h-[25px] min-w-[25px] h-5 w-5"
@@ -102,9 +105,9 @@ export default function Sidebar() {
                                alt="Friends"
                                width={25}
                                height={25}
-                        />
-                    </span>
-                        <span className="
+                        /></span>
+
+                            <span className="
                         ml-6
                         group-hover:inline-block
                         text-gray-700
@@ -113,8 +116,10 @@ export default function Sidebar() {
                         whitespace-nowrap
               ">
                             Amis connecté: 3
-                        </span>
+                            </span>
+
           </Link>
+                    )}
             </nav>
         </aside>
     );

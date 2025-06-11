@@ -1,3 +1,4 @@
+// /src/context/authcontext.tsx
 "use client";
 import { createContext, useState,useContext, useEffect, ReactNode } from "react";
 
@@ -28,9 +29,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     console.log("[Home.tsx]", { isConnected, user, isLoading });
 
-
-
-
     useEffect(() => {
         const storedToken = localStorage.getItem("access_token");
         if (storedToken) {
@@ -45,16 +43,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     setIsConnectedState(true);
                     setToken(storedToken);
                     setUser(data.user);
+                    setIsLoading(false); // ✅ Ajouté ici !
                 })
                 .catch((err) => {
                     console.log("[AUTH] Erreur auth :", err);
-                    setIsLoading(false);
+                    setIsConnectedState(false);
                     setToken(null);
                     setUser(null);
-                    logout();
+                    setIsLoading(false); // ✅ Aussi dans le catch
+                    // Optionnel: ne pas appeler logout() ici pour éviter les boucles
+                    localStorage.removeItem("access_token");
                 });
-        }else{
-            setIsLoading(false);
+        } else {
+            setIsLoading(false); // ✅ Aussi quand il n'y a pas de token
         }
     }, []);
 
@@ -74,7 +75,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }, 50);
     };
 
-
     return (
         <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout, isLoading }}>
             {children}
@@ -87,4 +87,5 @@ export const useAuth = () => {
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
-    return context; };
+    return context;
+};

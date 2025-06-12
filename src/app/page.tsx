@@ -1,15 +1,15 @@
 // src/app/page.tsx
 "use client";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import { useAuth } from "@/context/authcontext";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 
-export default function Home() {
+export default function Page() {
     const { isConnected, user, isLoading } = useAuth();
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const [mounted, setMounted] = useState(false);
     const [matchmakingLoading, setMatchmakingLoading] = useState(false);
@@ -33,17 +33,6 @@ export default function Home() {
         window.location.href = "http://localhost:3333/auth/steam/";
     };
 
-    useEffect(() => {
-        if (typeof window === "undefined") return;
-        const token = searchParams.get("token");
-        if (token) {
-            localStorage.setItem("access_token", token);
-            console.log(token);
-            router.replace("/");
-        } else {
-            console.log("No token", token);
-        }
-    }, [searchParams, router]);
 
     const handleStartMatch = async (mode: "1v1" | "2v2") => {
         const modeId = mode === "1v1" ? 1 : 2;

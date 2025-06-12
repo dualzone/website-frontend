@@ -31,5 +31,5 @@ COPY --from=builder /app/package.json ./package.json
 RUN addgroup -g 1001 -S nodejs && adduser -S appuser -u 1001
 USER appuser
 
-EXPOSE 3333
+EXPOSE 3000
 CMD ["npm", "start"]

@@ -3,6 +3,8 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import { useAuth } from "./authcontext";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3333";
+
 type Mode = {
     id: number;
     name: string;
@@ -84,7 +86,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchModes = async () => {
         try {
-            const response = await fetch("http://localhost:3333/modes/cs2", {
+            const response = await fetch(`${API_URL}/modes/cs2`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -105,7 +107,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         setError(null);
 
         try {
-            const response = await fetch(`http://localhost:3333/match/enqueue/${modeId}`, {
+            const response = await fetch(`${API_URL}/match/enqueue/${modeId}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -141,7 +143,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token || !currentMode) return;
 
         try {
-            const response = await fetch(`http://localhost:3333/demo/force_found_match/${currentMode}`, {
+            const response = await fetch(`${API_URL}/demo/force_found_match/${currentMode}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -164,7 +166,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token || !currentMode) return;
 
         try {
-            const response = await fetch(`http://localhost:3333/demo/force_resolve_mm/${currentMode}`, {
+            const response = await fetch(`${API_URL}/demo/force_resolve_mm/${currentMode}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -183,7 +185,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("http://localhost:3333/demo/force_end_match", {
+            const response = await fetch("${API_URL}/demo/force_end_match", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -202,7 +204,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("http://localhost:3333/demo/force_warmup_start", {
+            const response = await fetch("${API_URL}/demo/force_warmup_start", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -221,7 +223,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("http://localhost:3333/demo/force_update_match_score", {
+            const response = await fetch("${API_URL}/demo/force_update_match_score", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

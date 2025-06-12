@@ -2,6 +2,8 @@
 "use client";
 import { createContext, useState,useContext, useEffect, ReactNode } from "react";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3333";
+
 type User = {
     id: string;
     pseudo: string;
@@ -32,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const storedToken = localStorage.getItem("access_token");
         if (storedToken) {
-            fetch("http://localhost:3333/auth", {
+            fetch(`${API_URL}/auth`, {
                 headers: {
                     Authorization: `Bearer ${storedToken}`,
                 },

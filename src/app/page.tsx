@@ -10,6 +10,7 @@ import ReactPlayer from "react-player/youtube";
 export default function Page() {
     const { isConnected, user, isLoading } = useAuth();
     const router = useRouter();
+    const api_url = process.env.REACT_APP_API_URL;
 
     const [mounted, setMounted] = useState(false);
     const [matchmakingLoading, setMatchmakingLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function Page() {
     });
 
     const handleConnect = () => {
-        window.location.href = "http://localhost:3333/auth/steam/";
+        window.location.href = `${api_url}/auth/steam/`;
     };
 
 

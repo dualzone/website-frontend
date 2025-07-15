@@ -7,10 +7,10 @@ import { useAuth } from "@/context/authcontext";
 const HeaderComp = () => {
 
     const { isConnected, logout } = useAuth();
-
+    const api_url = process.env.NEXT_PUBLIC_API_URL;
 
     const handleConnect = () => {// simulate connection
-        window.location.href = "http://localhost:3333/auth/steam/"; // redirection réelle
+        window.location.href = `${api_url}/auth/steam/`; // redirection réelle
     };
 
     const handleDisconnect = () => {

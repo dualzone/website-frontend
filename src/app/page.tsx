@@ -233,12 +233,12 @@ export default function Page() {
                                     <li>✔️ Interface e-sport claire et moderne</li>
                                     <li>✔️ Historique des matchs et progression</li>
                                 </ul>
-                                <button
-                                    onClick={handleConnect}
+                                <a
+                                    href="{api_url}/auth/steam/"
                                     className="mt-6 text-4xl inline-block px-16 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
                                 >
                                     JOUER
-                                </button>
+                                </a>
                             </div>
                         </>
                     )}

@@ -3,7 +3,7 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import { useAuth } from "./authcontext";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3333";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
 
 type Mode = {
     id: number;

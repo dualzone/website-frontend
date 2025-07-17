@@ -35,13 +35,13 @@ const HeaderComp = () => {
                                 Se déconnecter
                             </button>
                         ) : (
-                            <button
+                            <a
                                 className="justify-center items-center bg-gray-80 font-bold text-white px-4 py-1 rounded-lg bg-gray-800 hover:bg-gray-900 transition inline-flex"
-                                onClick={handleConnect}
+                                href={`${api_url}/auth/steam/`}
                             >
                                 S&#39;identifier avec
                                 <Image src="/steam.svg" alt="Logo steam" className="right-2" height={75} width={75} />
-                            </button>
+                            </a>
                         )}
                     </div>
                 </div>

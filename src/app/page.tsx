@@ -1,6 +1,6 @@
 // src/app/page.tsx
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { useAuth } from "@/context/authcontext";
@@ -8,11 +8,14 @@ import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 
 export default function Page() {
-    const { isConnected, user, isLoading } = useAuth();
+    const { isConnected, user, isLoading, login } = useAuth();
     const router = useRouter();
-    const api_url = process.env.REACT_APP_API_URL;
+    const api_url = process.env.NEXT_PUBLIC_API_URL;
 
     const [mounted, setMounted] = useState(false);
+    const urlParameters = useSearchParams();
+    const token = urlParameters.get("token");
+
     const [matchmakingLoading, setMatchmakingLoading] = useState(false);
     const [recentMatches] = useState([
         { opponent: "AlphaZ", result: "win", mode: "1v1", time: "5 min" },
@@ -57,6 +60,11 @@ export default function Page() {
     };
 
     useEffect(() => {
+        if(token){
+            login(token); // Connection avec le token
+        }
+
+
         setMounted(true);
     }, []);
 

@@ -1,8 +1,8 @@
 // /src/context/authcontext.tsx
 "use client";
-import { createContext, useState,useContext, useEffect, ReactNode } from "react";
+import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3333";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
 
 type User = {
     id: string;
@@ -20,6 +20,7 @@ type AuthContextType = {
     user: User | null;
     logout: () => void;
     isLoading: boolean;
+    login: (newToken: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -77,8 +78,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }, 50);
     };
 
+    const login = (newToken: string) => {
+        setToken(newToken);
+        localStorage.setItem("access_token", newToken);
+        setIsConnectedState(true);
+        setIsLoading(false); // ✅ Mise à jour de l'état de chargement
+        // Optionnel: faire une requête pour récupérer les infos utilisateur
+
+
+
+        fetch(`${API_URL}/auth`, {
+            headers: {
+                Authorization: `Bearer ${newToken}`,
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                setUser(data.user);
+            })
+            .catch(err => {
+                console.error("[AUTH] Erreur lors de la récupération des données utilisateur :", err);
+            });
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete('token');
+
+        // Remplace l'URL dans la barre sans recharger la page
+        window.history.replaceState({}, '', url.toString());
+
+    }
+
     return (
-        <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout, isLoading }}>
+        <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout, isLoading, login }}>
             {children}
         </AuthContext.Provider>
     );

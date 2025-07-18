@@ -309,7 +309,7 @@ export default function Page() {
                                 </ul>
                                 <button
                                     onClick={handleConnect}
-                                    className="mt-6 text-4xl inline-block px-16 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
+                                    className="mt-6 text-4xl inline-block px-16 py-4 bg-green-600 z-20 hover:bg-green-700 text-white rounded-lg font-semibold transition"
                                 >
                                     JOUER
                                 </button>

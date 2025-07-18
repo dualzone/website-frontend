@@ -6,6 +6,7 @@ import Sidebar from "../components/sidebar";
 import HeaderComp from "../components/header";
 import { AuthProvider } from "@/context/authcontext";
 import { MatchmakingProvider } from "@/context/matchmakingContext";
+import { WebSocketProvider } from "@/context/websocketContext";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -36,11 +37,13 @@ export default function RootLayout({
         >
         <AuthProvider>
             <MatchmakingProvider>
-                <HeaderComp/>
-                <div className="min-h-screen flex">
-                    <Sidebar />
-                    <main className="flex-1 p-6">{children}</main>
-                </div>
+                <WebSocketProvider>
+                    <HeaderComp/>
+                    <div className="min-h-screen flex">
+                        <Sidebar />
+                        <main className="flex-1 overflow-hidden">{children}</main>
+                    </div>
+                </WebSocketProvider>
             </MatchmakingProvider>
         </AuthProvider>
         </body>

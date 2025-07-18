@@ -1,8 +1,8 @@
-// /src/context/authcontext.tsx
+// src/context/authcontext.tsx
 "use client";
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
 type User = {
     id: string;
@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    console.log("[Home.tsx]", { isConnected, user, isLoading });
 
     useEffect(() => {
         const storedToken = localStorage.getItem("access_token");
@@ -46,19 +45,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     setIsConnectedState(true);
                     setToken(storedToken);
                     setUser(data.user);
-                    setIsLoading(false); // ✅ Ajouté ici !
+                    setIsLoading(false);
                 })
                 .catch((err) => {
                     console.log("[AUTH] Erreur auth :", err);
                     setIsConnectedState(false);
                     setToken(null);
                     setUser(null);
-                    setIsLoading(false); // ✅ Aussi dans le catch
-                    // Optionnel: ne pas appeler logout() ici pour éviter les boucles
+                    setIsLoading(false);
                     localStorage.removeItem("access_token");
                 });
         } else {
-            setIsLoading(false); // ✅ Aussi quand il n'y a pas de token
+            setIsLoading(false);
         }
     }, []);
 
@@ -72,9 +70,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         localStorage.removeItem("access_token");
 
-        // attendre un cycle complet pour s'assurer que localStorage est bien vidé
         setTimeout(() => {
-            window.location.replace("/"); // force une vraie navigation sans recharger React state
+            window.location.replace("/");
         }, 50);
     };
 
@@ -82,10 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setToken(newToken);
         localStorage.setItem("access_token", newToken);
         setIsConnectedState(true);
-        setIsLoading(false); // ✅ Mise à jour de l'état de chargement
-        // Optionnel: faire une requête pour récupérer les infos utilisateur
-
-
+        setIsLoading(false);
 
         fetch(`${API_URL}/auth`, {
             headers: {
@@ -102,11 +96,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const url = new URL(window.location.href);
         url.searchParams.delete('token');
-
-        // Remplace l'URL dans la barre sans recharger la page
         window.history.replaceState({}, '', url.toString());
-
-    }
+    };
 
     return (
         <AuthContext.Provider value={{ isConnected, setIsConnected, token, user, logout, isLoading, login }}>

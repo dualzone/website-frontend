@@ -1,9 +1,9 @@
-// src/context/matchmakingcontext.tsx
+// src/context/matchmakingContext.tsx
 "use client";
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import { useAuth } from "./authcontext";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
 type Mode = {
     id: number;
@@ -52,8 +52,8 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
     // Données des modes
     const [modes, setModes] = useState<Mode[]>([]);
     const [playersInQueue] = useState<{ [modeId: number]: number }>({
-        1: 247, // 1v1
-        2: 89   // 2v2
+        1: 247,
+        2: 89
     });
     const [averageWaitTime] = useState<{ [modeId: number]: string }>({
         1: "1m 30s",
@@ -131,7 +131,6 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const cancelQueue = () => {
-        // TODO: Implémenter l'annulation côté API quand disponible
         setIsInQueue(false);
         setCurrentMode(null);
         setQueueTimer(0);
@@ -152,10 +151,17 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
 
             if (response.ok) {
                 console.log("Match forcé créé");
-                // Le match est trouvé, on sort de la queue
+
+                // ✅ Générer un ID de match fictif et rediriger
+                const fakeMatchId = `demo-match-${Date.now()}`;
+
+                // Nettoyer l'état de la queue
                 setIsInQueue(false);
                 setCurrentMode(null);
                 setQueueTimer(0);
+
+                // ✅ Redirection vers la page de match
+                window.location.href = `/match/${fakeMatchId}`;
             }
         } catch (err) {
             console.error("Erreur force match:", err);
@@ -185,7 +191,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("${API_URL}/demo/force_end_match", {
+            const response = await fetch(`${API_URL}/demo/force_end_match`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -204,7 +210,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("${API_URL}/demo/force_warmup_start", {
+            const response = await fetch(`${API_URL}/demo/force_warmup_start`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -223,7 +229,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch("${API_URL}/demo/force_update_match_score", {
+            const response = await fetch(`${API_URL}/demo/force_update_match_score`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -238,16 +244,10 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const formatTime = (seconds: number) => {
-        const min = Math.floor(seconds / 60);
-        const sec = seconds % 60;
-        return `${min}m ${sec < 10 ? "0" : ""}${sec}s`;
-    };
-
     return (
         <MatchmakingContext.Provider value={{
-        // État de la queue
-        isInQueue,
+            // État de la queue
+            isInQueue,
             currentMode,
             queueTimer,
             estimatedTime,
@@ -271,10 +271,10 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
             // États
             isLoading,
             error,
-    }}>
-    {children}
-    </MatchmakingContext.Provider>
-);
+        }}>
+            {children}
+        </MatchmakingContext.Provider>
+    );
 };
 
 export const useMatchmaking = () => {

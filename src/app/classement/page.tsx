@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useAuth } from "@/context/authcontext";
 import { useState, useEffect } from "react";
-import { generateAvatar, getFakeUsersWithAvatars } from "@/utils/avatarHelper";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
 type RankedPlayer = {
     user: {
@@ -23,102 +24,63 @@ type UserRank = {
 
 export default function ClassementPage() {
     const { user, isConnected, token } = useAuth();
-    const [selectedGame, setSelectedGame] = useState(1); // 1 pour CS2 par défaut
     const [leaderboard, setLeaderboard] = useState<RankedPlayer[]>([]);
     const [userRank, setUserRank] = useState<UserRank | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Données fictives avec avatars générés
     useEffect(() => {
-        if (isConnected) {
-            setIsLoading(true);
-            // Simulation de chargement
-            setTimeout(() => {
-                // Génération de données fictives pour le leaderboard avec avatars
-                const fakeLeaderboard: RankedPlayer[] = [
-                    {
-                        user: { id: "1", pseudo: "SkillMaster_Pro", userImage: generateAvatar("SkillMaster_Pro", "professional") },
-                        elo: 2156,
-                        rank: 1
-                    },
-                    {
-                        user: { id: "2", pseudo: "AlphaStrike", userImage: generateAvatar("AlphaStrike", "gaming") },
-                        elo: 2089,
-                        rank: 2
-                    },
-                    {
-                        user: { id: "3", pseudo: "NeonGamer", userImage: generateAvatar("NeonGamer", "fun") },
-                        elo: 2034,
-                        rank: 3
-                    },
-                    {
-                        user: { id: "4", pseudo: "CyberNinja", userImage: generateAvatar("CyberNinja", "gaming") },
-                        elo: 1987,
-                        rank: 4
-                    },
-                    {
-                        user: { id: "5", pseudo: "QuantumPlay", userImage: generateAvatar("QuantumPlay", "professional") },
-                        elo: 1923,
-                        rank: 5
-                    },
-                    {
-                        user: { id: "6", pseudo: "VoidWalker", userImage: generateAvatar("VoidWalker", "gaming") },
-                        elo: 1876,
-                        rank: 6
-                    },
-                    {
-                        user: { id: "7", pseudo: "FlashBang", userImage: generateAvatar("FlashBang", "fun") },
-                        elo: 1834,
-                        rank: 7
-                    },
-                    {
-                        user: { id: "8", pseudo: "StormBreaker", userImage: generateAvatar("StormBreaker", "gaming") },
-                        elo: 1789,
-                        rank: 8
-                    },
-                    {
-                        user: { id: "9", pseudo: "PhoenixRise", userImage: generateAvatar("PhoenixRise", "professional") },
-                        elo: 1756,
-                        rank: 9
-                    },
-                    {
-                        user: { id: "10", pseudo: "ShadowStrike", userImage: generateAvatar("ShadowStrike", "gaming") },
-                        elo: 1723,
-                        rank: 10
-                    },
-                    // Ajouter le joueur actuel avec son vrai avatar ou généré
-                    {
-                        user: {
-                            id: user?.id || "user",
-                            pseudo: user?.pseudo || "Vous",
-                            userImage: user?.userImage || generateAvatar(user?.pseudo || "Player", "gaming")
-                        },
-                        elo: 1547,
-                        rank: 156
-                    }
-                ];
-
-                setLeaderboard(fakeLeaderboard);
-                setUserRank({
-                    elo: 1547,
-                    rank: 156,
-                    total: 2847
-                });
-                setIsLoading(false);
-            }, 1000);
+        if (isConnected && token) {
+            fetchLeaderboard();
+            fetchUserRank();
         }
-    }, [isConnected, selectedGame, user]);
+    }, [isConnected, token]);
+
+    const fetchLeaderboard = async () => {
+        try {
+            const response = await fetch(`${API_URL}/ranks/1`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setLeaderboard(data.data);
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement du classement:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchUserRank = async () => {
+        try {
+            const response = await fetch(`${API_URL}/rank/1`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setUserRank(data);
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement du rang utilisateur:", error);
+        }
+    };
 
     const filteredLeaderboard = leaderboard.filter(player =>
         player.user.pseudo.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const getRankColor = (rank: number) => {
-        if (rank === 1) return "text-yellow-400"; // Or
-        if (rank === 2) return "text-gray-300"; // Argent
-        if (rank === 3) return "text-orange-400"; // Bronze
-        if (rank <= 10) return "text-blue-400"; // Top 10
+        if (rank === 1) return "text-yellow-400";
+        if (rank === 2) return "text-gray-300";
+        if (rank === 3) return "text-orange-400";
+        if (rank <= 10) return "text-blue-400";
         return "text-white";
     };
 
@@ -131,11 +93,11 @@ export default function ClassementPage() {
     };
 
     const getEloColor = (elo: number) => {
-        if (elo >= 2000) return "text-purple-400"; // Maître
-        if (elo >= 1800) return "text-blue-400"; // Diamant
-        if (elo >= 1500) return "text-green-400"; // Or
-        if (elo >= 1200) return "text-yellow-400"; // Argent
-        return "text-gray-400"; // Bronze
+        if (elo >= 2000) return "text-purple-400";
+        if (elo >= 1800) return "text-blue-400";
+        if (elo >= 1500) return "text-green-400";
+        if (elo >= 1200) return "text-yellow-400";
+        return "text-gray-400";
     };
 
     if (!isConnected) {
@@ -145,7 +107,7 @@ export default function ClassementPage() {
                     <h1 className="text-3xl font-bold mb-4">Classement DualZone</h1>
                     <p className="text-gray-400 mb-6">Connectez-vous pour voir votre position dans le classement</p>
                     <button
-                        onClick={() => window.location.href = "http://localhost:3333/auth/steam/"}
+                        onClick={() => window.location.href = `${API_URL}/auth/steam/`}
                         className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
                     >
                         Se connecter
@@ -157,7 +119,6 @@ export default function ClassementPage() {
 
     return (
         <main className="ml-14 mt-20 p-6 space-y-6 text-white">
-            {/* Header */}
             <header className="text-center space-y-4">
                 <h1 className="text-4xl font-bold">🏆 Classement DualZone</h1>
                 <p className="text-gray-400">Les meilleurs joueurs de la plateforme</p>
@@ -190,22 +151,8 @@ export default function ClassementPage() {
                 </div>
             )}
 
-            {/* Filtres et Recherche */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="flex space-x-2">
-                    <button
-                        onClick={() => setSelectedGame(1)}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                            selectedGame === 1
-                                ? "bg-green-600 text-white"
-                                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                        }`}
-                    >
-                        🎯 CS2 - Tous modes
-                    </button>
-                    {/* Futur: ajouter d'autres jeux */}
-                </div>
-
+            {/* Recherche */}
+            <div className="flex justify-end">
                 <div className="relative">
                     <input
                         type="text"
@@ -241,7 +188,6 @@ export default function ClassementPage() {
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-4">
-                                        {/* Rang */}
                                         <div className="text-center min-w-[60px]">
                                             <div className={`text-2xl ${getRankColor(player.rank)}`}>
                                                 {getRankIcon(player.rank)}
@@ -251,7 +197,6 @@ export default function ClassementPage() {
                                             </div>
                                         </div>
 
-                                        {/* Avatar et nom */}
                                         <div className="flex items-center space-x-3">
                                             <Image
                                                 src={player.user.userImage}
@@ -275,7 +220,6 @@ export default function ClassementPage() {
                                         </div>
                                     </div>
 
-                                    {/* ELO */}
                                     <div className="text-right">
                                         <div className={`text-2xl font-bold ${getEloColor(player.elo)}`}>
                                             {player.elo}
@@ -285,37 +229,9 @@ export default function ClassementPage() {
                                 </div>
                             </div>
                         ))}
-
-                        {filteredLeaderboard.length === 0 && (
-                            <div className="text-center py-12 text-gray-400">
-                                <p className="text-xl">Aucun joueur trouvé</p>
-                                <p className="text-sm">Essayez un autre terme de recherche</p>
-                            </div>
-                        )}
                     </div>
                 )}
             </div>
-
-            {/* Pagination */}
-            {!isLoading && filteredLeaderboard.length > 0 && (
-                <div className="flex justify-center space-x-2">
-                    <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all disabled:opacity-50" disabled>
-                        ← Précédent
-                    </button>
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg">
-                        1
-                    </button>
-                    <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all">
-                        2
-                    </button>
-                    <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all">
-                        3
-                    </button>
-                    <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all">
-                        Suivant →
-                    </button>
-                </div>
-            )}
 
             {/* Légende des rangs */}
             <div className="bg-gray-800 rounded-lg p-4">

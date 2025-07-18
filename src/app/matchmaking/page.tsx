@@ -31,8 +31,13 @@ export default function MatchmakingPage() {
     };
 
     const getCurrentModeName = () => {
+        // ✅ Vérification que modes est un tableau avant d'utiliser find
+        if (!Array.isArray(modes) || !currentMode) {
+            return currentMode === 1 ? "1v1" : currentMode === 2 ? "2v2" : "Mode inconnu";
+        }
+
         const mode = modes.find(m => m.id === currentMode);
-        return mode ? mode.name : "Mode inconnu";
+        return mode ? mode.name : (currentMode === 1 ? "1v1" : currentMode === 2 ? "2v2" : "Mode inconnu");
     };
 
     if (!isInQueue) {

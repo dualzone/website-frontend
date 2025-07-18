@@ -1,42 +1,45 @@
 // src/app/page.tsx
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { useAuth } from "@/context/authcontext";
+import { useMatchmaking } from "@/context/matchmakingContext";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
+
+type Match = {
+    id: string;
+    modeId: number;
+    status: string;
+    created_at: string;
+    teams: Array<{
+        id: string;
+        score: number;
+        players: Array<{
+            id: string;
+            pseudo: string;
+            userImage: string;
+        }>;
+    }>;
+};
+
 export default function Page() {
-    const { isConnected, user, isLoading, login } = useAuth();
+    const { isConnected, user, isLoading, login, token } = useAuth();
+    const { enqueue, playersInQueue, averageWaitTime } = useMatchmaking();
     const router = useRouter();
-    const api_url = process.env.NEXT_PUBLIC_API_URL;
 
     const [mounted, setMounted] = useState(false);
     const urlParameters = useSearchParams();
-    const token = urlParameters.get("token");
+    const tokenParam = urlParameters.get("token");
 
     const [matchmakingLoading, setMatchmakingLoading] = useState(false);
-    const [recentMatches] = useState([
-        { opponent: "AlphaZ", result: "win", mode: "1v1", time: "5 min" },
-        { opponent: "Nexus99", result: "lose", mode: "2v2", time: "1h" },
-        { opponent: "GhostX", result: "win", mode: "1v1", time: "3h" },
-    ]);
-
-    // Données fictives pour les stats en attendant le contexte
-    const [playersInQueue] = useState({
-        1: 247, // 1v1
-        2: 89   // 2v2
-    });
-    const [averageWaitTime] = useState({
-        1: "1m 30s",
-        2: "2m 15s"
-    });
+    const [recentMatches, setRecentMatches] = useState<Match[]>([]); // ✅ Initialisation avec un tableau vide
 
     const handleConnect = () => {
-        window.location.href = `${api_url}/auth/steam/`;
+        window.location.href = `${API_URL}/auth/steam/`;
     };
-
 
     const handleStartMatch = async (mode: "1v1" | "2v2") => {
         const modeId = mode === "1v1" ? 1 : 2;
@@ -45,28 +48,76 @@ export default function Page() {
         setMatchmakingLoading(true);
 
         try {
-            // TODO: Intégrer avec le contexte matchmaking une fois disponible
-            // await enqueue(modeId);
-
-            // Pour l'instant, simulation
-            setTimeout(() => {
-                setMatchmakingLoading(false);
-                router.push("/matchmaking");
-            }, 1000);
+            await enqueue(modeId);
+            router.push("/matchmaking");
         } catch (error) {
             console.error("Erreur lors de la mise en queue:", error);
+        } finally {
             setMatchmakingLoading(false);
         }
     };
 
-    useEffect(() => {
-        if(token){
-            login(token); // Connection avec le token
+    const fetchRecentMatches = async () => {
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/parties/1?row=3`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // ✅ Vérification que data.data existe et est un tableau
+                if (data?.data && Array.isArray(data.data)) {
+                    setRecentMatches(data.data);
+                } else {
+                    setRecentMatches([]); // Fallback sur tableau vide
+                }
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement des matchs récents:", error);
+            setRecentMatches([]); // ✅ En cas d'erreur, tableau vide
         }
+    };
 
+    const getMatchDisplay = (match: Match) => {
+        if (!user) return null;
 
+        const userTeam = match.teams?.find(team =>
+            team.players?.some(player => player.id === user.id)
+        );
+
+        if (!userTeam) return null;
+
+        const opponentTeam = match.teams?.find(team => team.id !== userTeam.id);
+
+        if (!opponentTeam) return null;
+
+        const isWin = userTeam.score > opponentTeam.score;
+        const opponent = opponentTeam.players?.[0]?.pseudo || "Adversaire";
+
+        return {
+            result: isWin ? "win" : "lose",
+            opponent,
+            mode: match.modeId === 1 ? "1v1" : "2v2",
+            time: new Date(match.created_at).toLocaleDateString('fr-FR')
+        };
+    };
+
+    useEffect(() => {
+        if (tokenParam) {
+            login(tokenParam);
+        }
         setMounted(true);
-    }, []);
+    }, [tokenParam, login]);
+
+    useEffect(() => {
+        if (isConnected && token) {
+            fetchRecentMatches();
+        }
+    }, [isConnected, token]);
 
     if (isLoading) {
         return (
@@ -77,11 +128,12 @@ export default function Page() {
     }
 
     return (
-        <div className="flex h-full w-full ml-6 mt-10 relative">
-            <main className="flex-grow text-white p-8 h-full">
-                <div className="p-4 text-white h-full mb-5">
+        <div className="flex h-full w-full relative">
+            <main className="flex-grow text-white h-full overflow-hidden">
+                <div className="text-white h-full w-full overflow-hidden">
                     {isConnected ? (
                         <>
+                            <div className="mt-24 ml-20 mr-4 h-full">
                             <div className="mb-8">
                                 <p className="text-lg font-bold flex z-0 mb-2">
                                     ✅ Connecté ! Bienvenue {user?.pseudo ?? "joueur"} !
@@ -92,7 +144,7 @@ export default function Page() {
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex gap-4 w-full h-[70%]">
+                            <div className="mt-6 flex gap-4 w-full h-[60%]">
                                 {/* Bouton 1v1 */}
                                 <button
                                     onClick={() => handleStartMatch("1v1")}
@@ -176,23 +228,36 @@ export default function Page() {
                             <div className="mt-6 bg-gray-800/50 rounded-lg p-4">
                                 <h3 className="text-lg font-semibold mb-3 text-gray-200">Activité récente</h3>
                                 <div className="flex space-x-4 overflow-x-auto">
-                                    {recentMatches.map((match, index) => (
-                                        <div
-                                            key={index}
-                                            className={`flex-shrink-0 p-3 rounded-lg text-sm ${
-                                                match.result === "win"
-                                                    ? "bg-green-900/50 border-l-4 border-green-500"
-                                                    : "bg-red-900/50 border-l-4 border-red-500"
-                                            }`}
-                                        >
-                                            <p className="font-medium">
-                                                {match.result === "win" ? "🏆" : "😔"} vs {match.opponent}
-                                            </p>
-                                            <p className="text-gray-400">
-                                                {match.mode} • il y a {match.time}
-                                            </p>
+                                    {/* ✅ Vérification que recentMatches est bien un tableau */}
+                                    {Array.isArray(recentMatches) && recentMatches.length > 0 ? (
+                                        recentMatches.map((match) => {
+                                            const matchDisplay = getMatchDisplay(match);
+                                            if (!matchDisplay) return null;
+
+                                            return (
+                                                <div
+                                                    key={match.id}
+                                                    className={`flex-shrink-0 p-3 rounded-lg text-sm ${
+                                                        matchDisplay.result === "win"
+                                                            ? "bg-green-900/50 border-l-4 border-green-500"
+                                                            : "bg-red-900/50 border-l-4 border-red-500"
+                                                    }`}
+                                                >
+                                                    <p className="font-medium">
+                                                        {matchDisplay.result === "win" ? "🏆" : "😔"} vs {matchDisplay.opponent}
+                                                    </p>
+                                                    <p className="text-gray-400">
+                                                        {matchDisplay.mode} • {matchDisplay.time}
+                                                    </p>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="flex-shrink-0 p-3 rounded-lg text-sm bg-gray-700">
+                                            <p className="text-gray-400">Aucun match récent</p>
                                         </div>
-                                    ))}
+                                    )}
+
                                     <div className="flex-shrink-0 flex items-center">
                                         <button
                                             onClick={() => router.push("/profil")}
@@ -202,6 +267,7 @@ export default function Page() {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         </>
                     ) : (
@@ -225,7 +291,7 @@ export default function Page() {
                                             }}
                                         />
                                     </div>
-                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md z-[-1]"/>
+                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md w-full h-full"/>
                                 </>
                             )}
                             <div className="flex flex-col items-center justify-center h-full text-center p-10 gap-6 z-0">
@@ -241,12 +307,12 @@ export default function Page() {
                                     <li>✔️ Interface e-sport claire et moderne</li>
                                     <li>✔️ Historique des matchs et progression</li>
                                 </ul>
-                                <a
-                                    href="{api_url}/auth/steam/"
+                                <button
+                                    onClick={handleConnect}
                                     className="mt-6 text-4xl inline-block px-16 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
                                 >
                                     JOUER
-                                </a>
+                                </button>
                             </div>
                         </>
                     )}

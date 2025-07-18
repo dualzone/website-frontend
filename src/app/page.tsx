@@ -31,8 +31,6 @@ export default function Page() {
     const router = useRouter();
 
     const [mounted, setMounted] = useState(false);
-    const urlParameters = useSearchParams();
-    const tokenParam = urlParameters.get("token");
 
     const [matchmakingLoading, setMatchmakingLoading] = useState(false);
     const [recentMatches, setRecentMatches] = useState<Match[]>([]); // ✅ Initialisation avec un tableau vide
@@ -107,11 +105,13 @@ export default function Page() {
     };
 
     useEffect(() => {
-        if (tokenParam) {
-            login(tokenParam);
+        const params = new URLSearchParams(window.location.search);
+        const userToken = params.get("token");
+        if (userToken !== null) {
+          login(userToken);
         }
         setMounted(true);
-    }, [tokenParam, login]);
+      }, [login]);
 
     useEffect(() => {
         if (isConnected && token) {

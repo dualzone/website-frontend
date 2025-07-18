@@ -1,7 +1,9 @@
 // src/context/matchmakingContext.tsx
 "use client";
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "./authcontext";
+import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
@@ -29,9 +31,15 @@ type MatchmakingContextType = {
     // Actions de démo
     forceFoundMatch: () => Promise<void>;
     forceResolveMatch: () => Promise<void>;
+
     forceEndMatch: () => Promise<void>;
     forceWarmupStart: () => Promise<void>;
+    forceChoosingStart: () => Promise<void>;
+    forcePlayingStart: () => Promise<void>;
+
     forceUpdateScore: () => Promise<void>;
+
+    generateRandomMatch: () => Promise<void>;
 
     // États
     isLoading: boolean;
@@ -42,6 +50,8 @@ const MatchmakingContext = createContext<MatchmakingContextType | undefined>(und
 
 export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
     const { token } = useAuth();
+
+    const router = useRouter();
 
     // État de la queue
     const [isInQueue, setIsInQueue] = useState(false);
@@ -63,6 +73,38 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
     // États généraux
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Vérifier si l'utilisateur est déjà en queue au démarrage
+    useEffect(() => {
+        if(!token) return
+        const checkMatchStatus = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_URL}/match/status`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                if(response.data.message === "User is in queue") {
+                    setIsInQueue(true);
+                    setCurrentMode(1)
+                    router.push("/matchmaking");
+                }else if(response.data.message === "User is in match") {
+                    router.push(`/match/${response.data.party.id}`);
+                } else {
+                    console.error("Unexpected response:", response.data);
+                }
+
+
+            } catch (error) {
+                console.error('Failed to fetch match status:', error);
+            }
+        };
+
+        checkMatchStatus();
+    }, [token])
 
     // Timer pour la queue
     useEffect(() => {
@@ -142,7 +184,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token || !currentMode) return;
 
         try {
-            const response = await fetch(`${API_URL}/demo/force_found_match/${currentMode}`, {
+            const response = await fetch(`${API_URL}/demo/matchmaking/randomplayer/${currentMode}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -172,7 +214,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token || !currentMode) return;
 
         try {
-            const response = await fetch(`${API_URL}/demo/force_resolve_mm/${currentMode}`, {
+            const response = await fetch(`${API_URL}/demo/matchmaking/resolveduo/${currentMode}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -191,7 +233,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch(`${API_URL}/demo/force_end_match`, {
+            const response = await fetch(`${API_URL}/demo/force/status/end`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -210,7 +252,45 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch(`${API_URL}/demo/force_warmup_start`, {
+            const response = await fetch(`${API_URL}/demo/force/status/warmup`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log("Warmup forcé démarré");
+            }
+        } catch (err) {
+            console.error("Erreur force warmup:", err);
+        }
+    };
+
+    const forceChoosingStart = async () => {
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/demo/force/status/choose`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log("Warmup forcé démarré");
+            }
+        } catch (err) {
+            console.error("Erreur force warmup:", err);
+        }
+    };
+
+    const forcePlayingStart = async () => {
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/demo/force/status/play`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -229,7 +309,7 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
         if (!token) return;
 
         try {
-            const response = await fetch(`${API_URL}/demo/force_update_match_score`, {
+            const response = await fetch(`${API_URL}/demo/force/score`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -243,6 +323,26 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
             console.error("Erreur force update score:", err);
         }
     };
+
+    const generateRandomMatch = async () => {
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/demo/random_result`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log("Warmup forcé démarré");
+            }
+        } catch (err) {
+            console.error("Erreur force warmup:", err);
+        }
+    };
+
 
     return (
         <MatchmakingContext.Provider value={{
@@ -267,6 +367,10 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
             forceEndMatch,
             forceWarmupStart,
             forceUpdateScore,
+            forceChoosingStart,
+            forcePlayingStart,
+            generateRandomMatch,
+
 
             // États
             isLoading,

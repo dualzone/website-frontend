@@ -10,7 +10,7 @@ type Match = {
     id: string;
     modeId: number;
     status: string;
-    created_at: string;
+    updatedAt: string;
     teams: Array<{
         id: string;
         score: number;
@@ -88,7 +88,7 @@ export default function ProfilPage() {
             score: `${userTeam.score}-${opponentTeam.score}`,
             opponent,
             mode: match.modeId === 1 ? "1v1" : "2v2",
-            date: match.created_at
+            date: match.updatedAt
         };
     };
 
@@ -102,9 +102,10 @@ export default function ProfilPage() {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log("Historique des matchs:", data);
                 // ✅ Vérification que data.data existe et est un tableau
-                if (data?.data && Array.isArray(data.data)) {
-                    setMatchHistory(data.data);
+                if (data?.parties.data && Array.isArray(data.parties.data)) {
+                    setMatchHistory(data.parties.data);
                 } else {
                     setMatchHistory([]); // Fallback sur tableau vide
                 }

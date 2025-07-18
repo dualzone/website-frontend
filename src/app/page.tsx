@@ -6,6 +6,7 @@ import { useAuth } from "@/context/authcontext";
 import { useMatchmaking } from "@/context/matchmakingContext";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
+import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
@@ -39,6 +40,8 @@ export default function Page() {
         window.location.href = `${API_URL}/auth/steam/`;
     };
 
+    
+
     const handleStartMatch = async (mode: "1v1" | "2v2") => {
         const modeId = mode === "1v1" ? 1 : 2;
         console.log("Mode sélectionné :", mode, "ID:", modeId);
@@ -68,8 +71,14 @@ export default function Page() {
             if (response.ok) {
                 const data = await response.json();
                 // ✅ Vérification que data.data existe et est un tableau
-                if (data?.data && Array.isArray(data.data)) {
-                    setRecentMatches(data.data);
+                if (data?.parties.data && Array.isArray(data.parties.data)) {
+                    let parties: Match[] = []
+                    data.parties.data.forEach((match: Match) => {
+                        if(parties.length >= 6) return; // Limite à 3 matchs
+                        parties.push(match);
+                    })
+
+                    setRecentMatches(parties);
                 } else {
                     setRecentMatches([]); // Fallback sur tableau vide
                 }

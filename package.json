@@ -6,6 +6,8 @@
   "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
   "main": "index.js",
   "dependencies": {
+    "@adonisjs/transmit-client": "^1.0.0",
+    "axios": "^1.10.0",
     "eslint-config-next": "^15.0.3",
     "locate-path": "^6.0.0",
     "next": "^15.0.3",

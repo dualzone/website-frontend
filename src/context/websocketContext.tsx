@@ -1,74 +1,102 @@
-// src/context/websocketContext.tsx
-"use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { Subscription, Transmit } from '@adonisjs/transmit-client'
+import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { useAuth } from "./authcontext";
 
-type WebSocketContextType = {
-    isConnected: boolean;
-    lastMessage: any;
-    sendMessage: (message: any) => void;
-};
+interface WebSocketContextType {
+    isConnected: boolean
+    error: Error | null
+}
 
-const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
+interface WebSocketProviderProps {
+    channel: string
+    onMessage: (event: string, data: any) => void
+    children: React.ReactNode
+}
 
-export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
+const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined)
+
+export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
+    channel,
+    onMessage,
+    children,
+}) => {
     const { user, token } = useAuth();
-    const [socket, setSocket] = useState<WebSocket | null>(null);
-    const [isConnected, setIsConnected] = useState(false);
-    const [lastMessage, setLastMessage] = useState<any>(null);
+    const transmitRef = useRef<Transmit | null>(null)
+    const subscriptionRef = useRef<Subscription | null>(null)
+    const [isConnected, setIsConnected] = React.useState(false)
+    const [error, setError] = React.useState<Error | null>(null)
 
     useEffect(() => {
-        if (user && token) {
-            // Utiliser l'URL de l'API mais avec le protocole WebSocket
-            const wsUrl = process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws') || 'ws://192.168.1.210:3333';
-            const ws = new WebSocket(`${wsUrl}/ws`);
+        const initializeTransmit = async () => {
+            try {
 
-            ws.onopen = () => {
-                console.log("WebSocket connecté");
-                setIsConnected(true);
-                // Authentification WebSocket
-                ws.send(JSON.stringify({
-                    type: "auth",
-                    token: token
-                }));
-            };
+                const wsUrl = process.env.NEXT_PUBLIC_API_URL;
+                // Create new Transmit instance
+                const transmit: Transmit = new Transmit({
+                    baseUrl: wsUrl || window.location.origin,
+                    beforeSubscribe(request: any) {
+                        if (request.headers instanceof Headers) {
+                            request.headers.set('Authorization', `Bearer ${token}`)
+                        } else {
+                            request.headers = {
+                                ...request.headers,
+                                Authorization: `Bearer ${token}`,
+                            }
+                        }
 
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                setLastMessage(data);
-                console.log("Message WebSocket reçu:", data);
-            };
+                    },
+                    onSubscription(_channel: string) {
+                        console.log(`Subscribed to channel: ${channel}`);
+                    }
 
-            ws.onclose = () => {
-                console.log("WebSocket déconnecté");
-                setIsConnected(false);
-            };
+                })
+                transmitRef.current = transmit
 
-            setSocket(ws);
+                const subscription = transmit.subscription(channel)
+                await subscription.create()
 
-            return () => {
-                ws.close();
-            };
+                subscriptionRef.current = subscription
+
+                subscription.onMessage((data: any) => {
+                    console.log(data)
+                    onMessage(data.event, data.data)
+                })
+
+
+            } catch (err) {
+                setError(err instanceof Error ? err : new Error('Failed to initialize WebSocket'))
+                setIsConnected(false)
+            }
         }
-    }, [user, token]);
 
-    const sendMessage = (message: any) => {
-        if (socket && isConnected) {
-            socket.send(JSON.stringify(message));
+        initializeTransmit()
+
+        // Cleanup on unmount
+        return () => {
+            if (transmitRef.current) {
+                transmitRef.current.close()
+            }
         }
-    };
+    }, [channel])
+
+
+
+    const value = {
+        isConnected,
+        error
+    }
 
     return (
-        <WebSocketContext.Provider value={{ isConnected, lastMessage, sendMessage }}>
+        <WebSocketContext.Provider value={value}>
             {children}
         </WebSocketContext.Provider>
-    );
-};
+    )
+}
 
 export const useWebSocket = () => {
-    const context = useContext(WebSocketContext);
+    const context = useContext(WebSocketContext)
     if (!context) {
-        throw new Error("useWebSocket must be used within a WebSocketProvider");
+        throw new Error('useWebSocket must be used within a WebSocketProvider')
     }
-    return context;
-};
+    return context
+}

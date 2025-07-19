@@ -29,6 +29,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     useEffect(() => {
         const initializeTransmit = async () => {
             try {
+                console.log('Initializing WebSocket connection...')
 
                 const wsUrl = process.env.NEXT_PUBLIC_API_URL;
                 // Create new Transmit instance
@@ -52,6 +53,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
                 })
                 transmitRef.current = transmit
 
+                console.log('Try to subscribe to the channel', channel)
+
                 const subscription = transmit.subscription(channel)
                 await subscription.create()
 
@@ -66,6 +69,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('Failed to initialize WebSocket'))
                 setIsConnected(false)
+                console.error('WebSocket initialization error:', err)
             }
         }
 

@@ -119,13 +119,6 @@ export default function MatchmakingPage() {
                     <p className="text-xl font-semibold text-white">{user?.pseudo}</p>
                 </div>
 
-                {/* Bouton d'annulation */}
-                <button
-                    onClick={cancelQueue}
-                    className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition transform hover:scale-105"
-                >
-                    Annuler la recherche
-                </button>
 
                 {/* Section démo */}
                 <div className="mt-8 space-y-4">

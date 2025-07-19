@@ -3,12 +3,14 @@
 
 import { useEffect, useState } from "react";
 import { useMatchmaking } from "@/context/matchmakingContext";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authcontext";
 import { WebSocketProvider } from "@/context/websocketContext";
 import axios from 'axios';
 
 export default function MatchmakingPage() {
     const { user, token } = useAuth();
+    const router = useRouter();
     const [group, setGroup] = useState<string | null>(null);
     const {
         isInQueue,
@@ -42,7 +44,9 @@ export default function MatchmakingPage() {
     }, [token]);
 
     const handleWsMessage = (event: any, data : any) => {
-
+        if(event === "matchFounded") {
+            router.push(`/match/${data.matchId}`);
+        }
 
     }
 

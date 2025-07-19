@@ -191,20 +191,6 @@ export const MatchmakingProvider = ({ children }: { children: ReactNode }) => {
                 },
             });
 
-            if (response.ok) {
-                console.log("Match forcé créé");
-
-                // ✅ Générer un ID de match fictif et rediriger
-                const fakeMatchId = `demo-match-${Date.now()}`;
-
-                // Nettoyer l'état de la queue
-                setIsInQueue(false);
-                setCurrentMode(null);
-                setQueueTimer(0);
-
-                // ✅ Redirection vers la page de match
-                window.location.href = `/match/${fakeMatchId}`;
-            }
         } catch (err) {
             console.error("Erreur force match:", err);
         }

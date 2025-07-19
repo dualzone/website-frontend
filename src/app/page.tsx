@@ -8,6 +8,13 @@ import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/youtube";
 import axios from "axios";
 
+import { v4 as uuidv4 } from "uuid";
+
+if (typeof crypto !== "undefined" && !crypto.randomUUID) {
+  crypto.randomUUID = () => uuidv4() as `${string}-${string}-${string}-${string}-${string}`;
+}
+
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
 type Match = {

@@ -1,6 +1,7 @@
 // src/context/authcontext.tsx
 "use client";
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { useNotifications } from "./notificationContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 

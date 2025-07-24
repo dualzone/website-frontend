@@ -197,12 +197,12 @@ export default function ProfilPage() {
                     {/* Statistiques principales */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl font-bold text-green-400">{userStats.total}</div>
-                            <div className="text-gray-400 text-sm">Matchs joués</div>
-                        </div>
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
                             <div className="text-3xl font-bold text-blue-400">#{userStats.rank}</div>
                             <div className="text-gray-400 text-sm">Classement</div>
+                        </div>
+                        <div className="bg-gray-800 rounded-lg p-4 text-center">
+                            <div className="text-3xl font-bold text-purple-400">{userStats.total}</div>
+                            <div className="text-gray-400 text-sm">Joueurs total</div>
                         </div>
                     </div>
 

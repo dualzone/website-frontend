@@ -87,7 +87,7 @@ export default function ProfilPage() {
             result: isWin ? "win" : "lose",
             score: `${userTeam.score}-${opponentTeam.score}`,
             opponent,
-            mode: match.modeId === 1 ? "1v1" : "2v2",
+            mode: match.modeId === 0 ? "1v1" : "2v2",
             date: match.updatedAt
         };
     };

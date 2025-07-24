@@ -8,7 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.210:3333";
 
 type Match = {
     id: string;
-    modeId: number;
+    gameModeId: number;
     status: string;
     updatedAt: string;
     teams: Array<{
@@ -87,7 +87,7 @@ export default function ProfilPage() {
             result: isWin ? "win" : "lose",
             score: `${userTeam.score}-${opponentTeam.score}`,
             opponent,
-            mode: match.modeId === 0 ? "1v1" : "2v2",
+            mode: match.gameModeId === 1 ? "1v1" : "2v2",
             date: match.updatedAt
         };
     };

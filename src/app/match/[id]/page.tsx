@@ -23,7 +23,7 @@ type Team = {
 
 type Match = {
     id: string;
-    modeId: number;
+    gameModeId: number;
     status: string;
     teams: Team[];
     created_at: string;
@@ -168,7 +168,7 @@ export default function MatchPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h1 className="text-3xl font-bold">
-                                    Match {match.modeId === 0 ? "1v1" : "2v2"}
+                                    Match {match.gameModeId === 1 ? "1v1" : "2v2"}
                                 </h1>
                                 <p className="text-gray-400">ID: {match.id}</p>
                                 {matchId.startsWith('demo-match-') && (

@@ -154,10 +154,6 @@ export default function Page() {
                                 <p className="text-lg font-bold flex z-0 mb-2">
                                     ✅ Connecté ! Bienvenue {user?.pseudo ?? "joueur"} !
                                 </p>
-                                <div className="flex items-center space-x-4 text-sm text-gray-400">
-                                    <span>🟢 {(playersInQueue[1] || 0) + (playersInQueue[2] || 0)} joueurs en ligne</span>
-                                    <span>⚡ Serveurs opérationnels</span>
-                                </div>
                             </div>
 
                             <div className="mt-6 flex gap-4 w-full h-[60%]">
@@ -176,14 +172,6 @@ export default function Page() {
                                             <h3 className="text-6xl uppercase tracking-wide drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] group-hover:opacity-80 transition-opacity">
                                                 Match 1v1
                                             </h3>
-                                            <div className="mt-4 space-y-2 text-xl group-hover:opacity-90 transition-opacity">
-                                                <p className="text-green-200 font-semibold">
-                                                    👥 {playersInQueue[1] || 247} joueurs en queue
-                                                </p>
-                                                <p className="text-blue-200">
-                                                    ⏱️ Temps moyen: {averageWaitTime[1] || "1m 30s"}
-                                                </p>
-                                            </div>
                                         </div>
 
                                         {matchmakingLoading ? (
@@ -215,14 +203,6 @@ export default function Page() {
                                             <h3 className="text-6xl uppercase tracking-wide drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] group-hover:opacity-80 transition-opacity">
                                                 Match 2v2
                                             </h3>
-                                            <div className="mt-4 space-y-2 text-xl group-hover:opacity-90 transition-opacity">
-                                                <p className="text-green-200 font-semibold">
-                                                    👥 {playersInQueue[2] || 89} joueurs en queue
-                                                </p>
-                                                <p className="text-blue-200">
-                                                    ⏱️ Temps moyen: {averageWaitTime[2] || "2m 15s"}
-                                                </p>
-                                            </div>
                                         </div>
 
                                         {matchmakingLoading ? (

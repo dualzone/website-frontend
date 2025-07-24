@@ -104,9 +104,6 @@ export default function MatchmakingPage() {
                     <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-green-500"></div>
 
                     <div className="text-center space-y-2">
-                        <p className="text-2xl font-mono text-white">
-                            Temps écoulé : <span className="text-green-400">{formatTime(queueTimer)}</span>
-                        </p>
                         <p className="text-lg text-gray-400">
                             Estimation : <span className="text-yellow-400">{estimatedTime}</span>
                         </p>

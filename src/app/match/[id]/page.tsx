@@ -88,16 +88,6 @@ export default function MatchPage() {
 
     };
 
-
-    const getMatchDuration = () => {
-        if (!match) return "0:00";
-        const start = new Date(match.created_at);
-        const diff = Math.floor((currentTime.getTime() - start.getTime()) / 1000);
-        const minutes = Math.floor(diff / 60);
-        const seconds = diff % 60;
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    };
-
     const getUserTeam = () => {
 
         if (!match || !user) return null;
@@ -178,7 +168,7 @@ export default function MatchPage() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h1 className="text-3xl font-bold">
-                                    Match {match.modeId === 1 ? "1v1" : "2v2"}
+                                    Match {match.modeId === 0 ? "1v1" : "2v2"}
                                 </h1>
                                 <p className="text-gray-400">ID: {match.id}</p>
                                 {matchId.startsWith('demo-match-') && (
@@ -188,9 +178,6 @@ export default function MatchPage() {
                             <div className="text-right">
                                 <div className={`text-xl font-semibold ${getStatusColor(match.status)}`}>
                                     {getStatusText(match.status)}
-                                </div>
-                                <div className="text-gray-400">
-                                    Durée: {getMatchDuration()}
                                 </div>
                             </div>
                         </div>
@@ -227,9 +214,6 @@ export default function MatchPage() {
                             {/* VS */}
                             <div className="text-center">
                                 <div className="text-4xl font-bold text-gray-400 mb-4">VS</div>
-                                <div className="text-sm text-gray-500">
-                                    {new Date(match.created_at).toLocaleTimeString('fr-FR')}
-                                </div>
                             </div>
 
                             {/* Équipe adverse */}
@@ -353,7 +337,7 @@ export default function MatchPage() {
                                 onClick={forceWarmupStart}
                                 className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded text-sm font-medium transition"
                             >
-                                🔥 Démarer le warmup
+                                🔥 Démarrer le warmup
                             </button>
 
                             <button

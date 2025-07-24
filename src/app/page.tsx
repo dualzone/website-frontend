@@ -115,7 +115,7 @@ export default function Page() {
         return {
             result: isWin ? "win" : "lose",
             opponent,
-            mode: match.modeId === 1 ? "1v1" : "2v2",
+            mode: match.modeId === 0 ? "1v1" : "2v2",
             time: new Date(match.created_at).toLocaleDateString('fr-FR')
         };
     };
@@ -241,9 +241,6 @@ export default function Page() {
                                                 >
                                                     <p className="font-medium">
                                                         {matchDisplay.result === "win" ? "🏆" : "😔"} vs {matchDisplay.opponent}
-                                                    </p>
-                                                    <p className="text-gray-400">
-                                                        {matchDisplay.mode} • {matchDisplay.time}
                                                     </p>
                                                 </div>
                                             );

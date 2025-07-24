@@ -152,7 +152,6 @@ export default function ProfilPage() {
 
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold text-white">{user.pseudo}</h1>
-                        <p className="text-gray-400">Membre depuis {new Date(user.created_at).toLocaleDateString('fr-FR')}</p>
                         <div className="mt-2 flex items-center space-x-4">
                             <span className="px-3 py-1 bg-green-600 rounded-full text-sm font-medium">
                                 ELO: {userStats?.currentElo}
@@ -198,16 +197,12 @@ export default function ProfilPage() {
                     {/* Statistiques principales */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl font-bold text-green-400">{userStats.totalMatches}</div>
+                            <div className="text-3xl font-bold text-green-400">{userStats.total}</div>
                             <div className="text-gray-400 text-sm">Matchs joués</div>
                         </div>
                         <div className="bg-gray-800 rounded-lg p-4 text-center">
                             <div className="text-3xl font-bold text-blue-400">#{userStats.rank}</div>
                             <div className="text-gray-400 text-sm">Classement</div>
-                        </div>
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl font-bold text-purple-400">{userStats.total}</div>
-                            <div className="text-gray-400 text-sm">Joueurs total</div>
                         </div>
                     </div>
 

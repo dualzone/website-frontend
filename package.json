@@ -1,26 +1,51 @@
 {
   "name": "website-frontend",
   "version": "0.1.0",
-  "private": true,
+  "lockfileVersion": 3,
+  "requires": true,
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "index.js",
+  "dependencies": {
+    "@adonisjs/transmit-client": "^1.0.0",
+    "axios": "^1.10.0",
+    "crypto-browserify": "^3.12.1",
+    "eslint-config-next": "^15.0.3",
+    "locate-path": "^6.0.0",
+    "next": "^15.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-fast-compare": "^3.2.2",
+    "react-player": "^2.16.0",
+    "tailwindcss": "^3.4.17",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/react": "19.1.8",
+    "eslint": "8.10.0",
+    "eslint-config-next": "12.1.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-react": "^7.29.3",
+    "jest": "^27.5.1"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint.fix": "eslint --fix --ext .js ./",
+    "test": "jest"
   },
-  "dependencies": {
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
-    "next": "15.0.3"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dualzone/website-frontend.git"
   },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.3"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dualzone/website-frontend/issues"
+  },
+  "homepage": "https://github.com/dualzone/website-frontend#readme"
 }

@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
+
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+    images: {
+        domains: ["avatars.steamstatic.com"], // ← ici tu autorises le domaine externe
+    },
+    /* config options here */
+}
 
 export default nextConfig;
